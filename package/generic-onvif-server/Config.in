@@ -1,0 +1,6 @@
+config BR2_PACKAGE_GENERIC_ONVIF_SERVER
+	bool "generic-onvif-server"
+	help
+      ONVIF server to use with generic camera
+
+      https://github.com/n1tsu/generic-onvif-server
