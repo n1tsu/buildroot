@@ -1,6 +1,9 @@
 config BR2_PACKAGE_GENERIC_ONVIF_SERVER
 	bool "generic-onvif-server"
     select BR2_PACKAGE_GSTREAMER1
+    select BR2_PACKAGE_OPENSSL
+    select BR2_PACKAGE_GST1_RTSP_SERVER
+    select BR2_INSTALL_LIBSTDCPP
 	help
       ONVIF server to use with generic camera
 
