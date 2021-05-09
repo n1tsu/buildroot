@@ -1,56 +1,57 @@
-#!/bin/bash
+#!/bin/sh
 #
 # S80onvif        Startup script for the Onvif server
 #
 # processname: onvif-server
 # config: /etc/generic-onvif-server/confs
-# config: /etc/sysconfig/httpd
 # pidfile: /var/run/onvif.pid
 
-# Source function library.
-. /etc/rc.d/init.d/functions
+DAEMON="onvif-server"
+PIDFILE="/var/run/$DAEMON.pid"
+ONVIF_ARGS="--xaddr $(hostname -i)"
 
-prog=onvif-server
-options="--xaddr $(hostname -i)"
-pidfile=${PIDFILE-/var/run/onvif.pid}
-RETVAL=0
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
 
+# BusyBox' syslogd does not create a pidfile, so pass "-n" in the command line
+# and use "-m" to instruct start-stop-daemon to create one.
 start() {
-        echo -n $"Starting $prog: "
-        daemon --pidfile=${pidfile} $prog $options
-        RETVAL=$?
-        echo
-        [ $RETVAL = 0 ] && touch ${lockfile}
-        return $RETVAL
+	printf 'Starting %s: ' "$DAEMON"
+	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/usr/bin/$DAEMON" -- $ONVIF_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
 }
 
 stop() {
-	echo -n $"Stopping $prog: "
-    killall $prog
-	RETVAL=$?
-	echo
-	[ $RETVAL = 0 ] && rm -f ${pidfile}
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon -K -q -p "$PIDFILE"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		rm -f "$PIDFILE"
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
 }
 
 case "$1" in
-  start)
-	start
-	;;
-  stop)
-	stop
-	;;
-  status)
-    status -p ${pidfile}
-	RETVAL=$?
-	;;
-  restart)
-	stop
-    sleep 3
-	start
-	;;
-  *)
-	echo $"Usage: $prog {start|stop|restart}"
-	exit 1
+	start|stop|restart)
+		"$1";;
+	reload)
+		restart;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
 esac
-
-exit $RETVAL
