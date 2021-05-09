@@ -16,7 +16,6 @@ endef
 define GENERIC_ONVIF_SERVER_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/etc/generic-onvif-server
 	cp -r $(@D)/configs $(TARGET_DIR)/etc/generic-onvif-server
-	mkdir -p $(TARGET_DIR)/usr/lib/generic-onvif-server
 	cp -r $(@D)/camera/lib $(TARGET_DIR)/usr/lib/generic-onvif-server
 	$(INSTALL) -D -m 0755 $(@D)/onvif-server $(TARGET_DIR)/usr/bin
 endef

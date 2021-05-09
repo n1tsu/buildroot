@@ -8,7 +8,9 @@
 
 DAEMON="onvif-server"
 PIDFILE="/var/run/$DAEMON.pid"
-ONVIF_ARGS="--xaddr $(hostname -i)"
+IFACE=eth0
+IP=$(/sbin/ifconfig $IFACE | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}')
+ONVIF_ARGS="--xaddr $IP"
 
 # shellcheck source=/dev/null
 [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
