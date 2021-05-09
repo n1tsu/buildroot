@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# S80onvif        Startup script for the Onvif server
+#
+# processname: onvif-server
+# config: /etc/generic-onvif-server/confs
+# config: /etc/sysconfig/httpd
+# pidfile: /var/run/onvif.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+prog=onvif-server
+options="--xaddr $(hostname -i)"
+pidfile=${PIDFILE-/var/run/onvif.pid}
+RETVAL=0
+
+start() {
+        echo -n $"Starting $prog: "
+        daemon --pidfile=${pidfile} $prog $options
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && touch ${lockfile}
+        return $RETVAL
+}
+
+stop() {
+	echo -n $"Stopping $prog: "
+    killall $prog
+	RETVAL=$?
+	echo
+	[ $RETVAL = 0 ] && rm -f ${pidfile}
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+    status -p ${pidfile}
+	RETVAL=$?
+	;;
+  restart)
+	stop
+    sleep 3
+	start
+	;;
+  *)
+	echo $"Usage: $prog {start|stop|restart}"
+	exit 1
+esac
+
+exit $RETVAL
