@@ -1,26 +1,44 @@
-Buildroot is a simple, efficient and easy-to-use tool to generate embedded
-Linux systems through cross-compilation.
+## Génerer les images des cameras
 
-The documentation can be found in docs/manual. You can generate a text
-document with 'make manual-text' and read output/docs/manual/manual.text.
-Online documentation can be found at http://buildroot.org/docs.html
+* Pour les moments ces images sont en ARM pour QEMU
+* Il faut lancer le `make -jX` en root pour le moment
 
-To build and use the buildroot stuff, do the following:
+``` sh
+make sec_eole_defconfig # Importe la configuration
+make -jX                # X etant le nombre de coeurs, spoiler: la compilation est longue
+```
 
-1) run 'make menuconfig'
-2) select the target architecture and the packages you wish to compile
-3) run 'make'
-4) wait while it compiles
-5) find the kernel, bootloader, root filesystem, etc. in output/images
+## Les fichiers intéressants
 
-You do not need to be root to build or run buildroot.  Have fun!
+### configs/sec_eole_defconfig
 
-Buildroot comes with a basic configuration for a number of boards. Run
-'make list-defconfigs' to view the list of provided configurations.
+La configuration qui est chargée, en cas de modification de configuration avec
+l'interface (`make menuconfig`), il faut écraser cette config avec la commande
+suivante:
 
-Please feed suggestions, bug reports, insults, and bribes back to the
-buildroot mailing list: buildroot@buildroot.org
-You can also find us on #buildroot on Freenode IRC.
+``` sh
+make savedefconfig BR2_DEFCONFIG=configs/sec_eole_defconfig
+```
 
-If you would like to contribute patches, please read
-https://buildroot.org/manual.html#submitting-patches
+### board/advanced-epita-threats/sec-eole
+
+Contient les autres ressources necessaire pour la generation des images.
+
+#### cameras
+
+Contient les configurations spécifiques de chaque caméras. Dans `frames` les
+jpegs qui simuleront la vidéo, dans `images` l'emplacement dans lequel seront
+géneré les images une fois la compilation fini, et dans `onvif.config` la
+configuration pour le serveur onvif.
+
+#### rootfs_overlay
+
+Tout le contenu de ce dossier sera ajouté (en écrasant si besoin) au filesystem
+de l'image géneré. Il contient notamment le fichier `S80onvif` responsable du
+demarrage du serveur onvif en tant que daemon au boot de la machine.
+
+#### post-script.sh
+
+Script executé à la fin de la compilation pour copier l'image resultat en
+plusieurs (pour chaque caméra) en ajoutant a chaque fois la configuration et
+les fichiers spécifiques.

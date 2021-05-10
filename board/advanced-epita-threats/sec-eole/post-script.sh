@@ -12,7 +12,7 @@ for camera in ${dir_path}/cameras/*; do
     # Mount filesystem
     mkdir -p ${camera}/images
     cp output/images/* ${camera}/images
-    mount ${camera}/images/rootfs.ext2 $mount_point
+    mount ${camera}/images/rootfs.ext2 $mount_point || { exit 1; }
 
     # Move configuration
     cp ${camera}/onvif.config ${mount_point}/etc/generic-onvif-server/configs

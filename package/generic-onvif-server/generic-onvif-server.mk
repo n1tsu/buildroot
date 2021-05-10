@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GENERIC_ONVIF_SERVER_VERSION = ce2b2516001251956aac0d0fe698654b8a3b995f
+GENERIC_ONVIF_SERVER_VERSION = 9178d317fb447cf13c222c8e62e3823841b0f9d5
 GENERIC_ONVIF_SERVER_SITE = $(call github,n1tsu,generic-onvif-server,$(GENERIC_ONVIF_SERVER_VERSION))
 GENERIC_ONVIF_SERVER_DEPENDENCIES = gstreamer1 gst1-rtsp-server libopenssl
 GENERIC_ONVIF_SERVER_INSTALL_TARGET = YES
