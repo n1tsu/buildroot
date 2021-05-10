@@ -1,7 +1,22 @@
 ## Génerer les images des cameras
 
-* Pour les moments ces images sont en ARM pour QEMU
+Pour les moments ces images sont en ARM pour QEMU
+
+### Notes importantes
+
 * Il faut lancer le `make -jX` en root pour le moment
+* Il faut installer en local `gsoap`
+* La premiere compilation va fail à la fin, il faudra modifier des fichiers:
+  * `output/build/generic-onvif-server-{sha}/gsoap/stdsoap2.h`
+  * `output/build/generic-onvif-server-{sha}/gsoap/stdsoap2.cpp`
+  * `output/build/generic-onvif-server-{sha}/gsoap/dom.cpp`
+* Pour chacun de ces fichiers, modifier le `#define GSOAP_VERSION 208111` par votre
+  version gsoap (`soapcpp2 -V`)
+  
+C'est evidemment un vieux hotfix pour le moment, mais je pense que le fix
+smoothly est un peu trop overkill.
+
+### Commandes
 
 ``` sh
 make sec_eole_defconfig # Importe la configuration
